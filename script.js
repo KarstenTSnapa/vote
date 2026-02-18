@@ -71,7 +71,13 @@ async function sendToAPI(message) {
 
 async function fetchMessages() {
     try {
-        const res = await fetch(`${API_BASE}/messages`);
+        const res = await fetch(`${API_BASE}/messages`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text: message })
+        });
         if (res.ok) {
             const data = await res.json();
             // Normalize to local message shape (id, text, votes)

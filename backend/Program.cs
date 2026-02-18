@@ -8,13 +8,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=messages.db"));
 
+// Restrict CORS to your GitHub Pages site and the specific ngrok tunnel URL.
+// Note: CORS uses origin (scheme + host + port) and does not include path segments.
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+    options.AddPolicy("AllowSpecific", p => p
+        .WithOrigins(
+            "https://karstentsnapa.github.io", // GitHub Pages origin (no path)
+            "https://notifiable-phylar-elvera.ngrok-free.dev" // replace if your ngrok URL changes
+        )
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+    );
 });
 
 var app = builder.Build();
-app.UseCors("AllowAll");
+app.UseCors("AllowSpecific");
 
 // Ensure DB created on startup
 using (var scope = app.Services.CreateScope())
