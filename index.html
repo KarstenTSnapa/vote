@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Board</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Message Board</h1>
+        
+        <div class="input-section">
+            <input type="text" id="messageInput" placeholder="Enter your message...">
+            <button id="sendBtn">Send</button>
+        </div>
+
+        <div id="statusMsg" class="status"></div>
+
+        <div class="messages-section" id="messagesContainer">
+            <div class="empty-state">No messages yet. Write something!</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
