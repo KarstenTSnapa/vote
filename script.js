@@ -78,20 +78,18 @@ function displayMessages() {
         if (votedMessageIndex === index) {
             msgBox.classList.add('voted');
         }
-        msgBox.style.cursor = 'pointer';
         
         const textSpan = document.createElement('span');
         textSpan.className = 'message-text';
         textSpan.textContent = msgObj.text;
         
-        const voteCount = document.createElement('span');
-        voteCount.className = 'vote-count';
-        voteCount.textContent = '👍 ' + msgObj.votes;
+        const upvoteBtn = document.createElement('button');
+        upvoteBtn.className = 'upvote-btn';
+        upvoteBtn.textContent = '👍 ' + msgObj.votes;
+        upvoteBtn.addEventListener('click', () => upvoteMessage(index));
         
         msgBox.appendChild(textSpan);
-        msgBox.appendChild(voteCount);
-        
-        msgBox.addEventListener('click', () => upvoteMessage(index));
+        msgBox.appendChild(upvoteBtn);
         messagesContainer.appendChild(msgBox);
     });
 }
