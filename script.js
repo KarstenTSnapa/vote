@@ -71,15 +71,35 @@ async function sendToAPI(message) {
 
 async function fetchMessages() {
     try {
-       fetch('https://notifiable-phylar-elvera.ngrok-free.dev/messages', { method: 'GET', mode: 'cors' })
-        .then(async r => {
-        console.log('status', r.status);
-        console.log('content-type', r.headers.get('content-type'));
-        const text = await r.text();
-        console.log('body-start', text.slice(0, 1000));
-        return text;
-  })
-  .catch(e => console.error('fetch error', e));
+        const res = await fetch(`${API_BASE}/messages`, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Accept': 'application/json',
+                // This header tells ngrok to skip the browser interstitial for programmatic requests
+                'ngrok-skip-browser-warning': 'true'
+            }
+        });
+
+        // Debugging info
+        console.debug('fetchMessages status', res.status, 'content-type', res.headers.get('content-type'));
+
+        if (!res.ok) {
+            showStatus('Failed to load messages', 'error');
+            return;
+        }
+
+        const contentType = (res.headers.get('content-type') || '').toLowerCase();
+        if (contentType.includes('application/json')) {
+            const data = await res.json();
+            messages = data.map(m => ({ id: m.id, text: m.text, votes: m.votes }));
+            displayMessages();
+        } else {
+            // Received HTML (ngrok interstitial or other error page)
+            const text = await res.text();
+            console.error('Expected JSON but received HTML from API. Response starts:', text.slice(0, 500));
+            showStatus('Server returned HTML instead of JSON. Check ngrok tunnel and CORS.', 'error');
+        }
     } catch (err) {
         console.error(err);
         showStatus('Error loading messages', 'error');

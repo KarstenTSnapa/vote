@@ -32,8 +32,16 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
-app.MapGet("/messages", async (AppDbContext db) =>
+app.MapGet("/messages", async (AppDbContext db, HttpContext ctx) =>
 {
+    // TEMP LOGGING: dump incoming request headers to the console to help debug ngrok / CORS
+    Console.WriteLine("--- /messages request received ---");
+    foreach (var h in ctx.Request.Headers)
+    {
+        Console.WriteLine($"{h.Key}: {h.Value}");
+    }
+    Console.WriteLine("----------------------------------");
+
     return await db.Messages.OrderByDescending(m => m.Votes).ThenByDescending(m => m.CreatedAt).ToListAsync();
 });
 app.MapPost("/messages", async (MessageDto dto, AppDbContext db) =>
