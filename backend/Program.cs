@@ -69,9 +69,12 @@ app.MapPost("/messages/{id:int}/upvote", async (int id, AppDbContext db) =>
 // Admin: set votes for a message by id
 app.MapPost("/messages/{id:int}/votes", async (int id, VotesDto dto, AppDbContext db) =>
 {
+    Console.WriteLine($"Votes endpoint hit. Id={id}, Votes={dto?.Votes}");
+
     var m = await db.Messages.FindAsync(id);
     if (m == null) return Results.NotFound();
     if (dto.Votes < 0) return Results.BadRequest(new { error = "Votes must be >= 0" });
+
     m.Votes = dto.Votes;
     await db.SaveChangesAsync();
     return Results.Ok(m);
