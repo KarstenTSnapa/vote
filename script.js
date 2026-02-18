@@ -71,21 +71,15 @@ async function sendToAPI(message) {
 
 async function fetchMessages() {
     try {
-        const res = await fetch(`${API_BASE}/messages`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ text: message })
-        });
-        if (res.ok) {
-            const data = await res.json();
-            // Normalize to local message shape (id, text, votes)
-            messages = data.map(m => ({ id: m.id, text: m.text, votes: m.votes }));
-            displayMessages();
-        } else {
-            showStatus('Failed to load messages', 'error');
-        }
+       fetch('https://notifiable-phylar-elvera.ngrok-free.dev/messages', { method: 'GET', mode: 'cors' })
+        .then(async r => {
+        console.log('status', r.status);
+        console.log('content-type', r.headers.get('content-type'));
+        const text = await r.text();
+        console.log('body-start', text.slice(0, 1000));
+        return text;
+  })
+  .catch(e => console.error('fetch error', e));
     } catch (err) {
         console.error(err);
         showStatus('Error loading messages', 'error');
