@@ -1,5 +1,5 @@
 // API base - replace with your ngrok https URL when exposing the backend (e.g. https://abcd1234.ngrok.io)
-const API_BASE = 'https://REPLACE_WITH_YOUR_NGROK_URL';
+const API_BASE = 'https://notifiable-phylar-elvera.ngrok-free.dev';
 
 let messages = [];
 let votedMessageId = null; // track by id now
