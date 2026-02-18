@@ -72,7 +72,7 @@ async function sendToAPI(message) {
 async function fetchMessages() {
     try {
         const res = await fetch(`${API_BASE}/messages`, {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
