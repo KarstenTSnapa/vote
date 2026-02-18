@@ -66,6 +66,17 @@ app.MapPost("/messages/{id:int}/upvote", async (int id, AppDbContext db) =>
     return Results.Ok(m);
 });
 
+// Admin: set votes for a message by id
+app.MapPost("/messages/{id:int}/votes", async (int id, VotesDto dto, AppDbContext db) =>
+{
+    var m = await db.Messages.FindAsync(id);
+    if (m == null) return Results.NotFound();
+    if (dto.Votes < 0) return Results.BadRequest(new { error = "Votes must be >= 0" });
+    m.Votes = dto.Votes;
+    await db.SaveChangesAsync();
+    return Results.Ok(m);
+});
+
 // ADMIN: delete all messages - use with caution. You can call this locally or via ngrok.
 app.MapDelete("/messages", async (AppDbContext db) =>
 {
@@ -80,3 +91,4 @@ app.Run();
 
 // DTO and small record types inside the same file for simplicity
 public record MessageDto(string Text);
+public record VotesDto(int Votes);
