@@ -23,12 +23,11 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
-napp.MapGet("/messages", async (AppDbContext db) =>
+app.MapGet("/messages", async (AppDbContext db) =>
 {
     return await db.Messages.OrderByDescending(m => m.Votes).ThenByDescending(m => m.CreatedAt).ToListAsync();
 });
-
-napp.MapPost("/messages", async (MessageDto dto, AppDbContext db) =>
+app.MapPost("/messages", async (MessageDto dto, AppDbContext db) =>
 {
     if (string.IsNullOrWhiteSpace(dto.Text))
     {
@@ -41,7 +40,7 @@ napp.MapPost("/messages", async (MessageDto dto, AppDbContext db) =>
     return Results.Created($"/messages/{msg.Id}", msg);
 });
 
-napp.MapPost("/messages/{id:int}/upvote", async (int id, AppDbContext db) =>
+app.MapPost("/messages/{id:int}/upvote", async (int id, AppDbContext db) =>
 {
     var m = await db.Messages.FindAsync(id);
     if (m == null) return Results.NotFound();
@@ -50,7 +49,7 @@ napp.MapPost("/messages/{id:int}/upvote", async (int id, AppDbContext db) =>
     return Results.Ok(m);
 });
 
-napp.Run();
+app.Run();
 
-n// DTO and small record types inside the same file for simplicity
+// DTO and small record types inside the same file for simplicity
 public record MessageDto(string Text);

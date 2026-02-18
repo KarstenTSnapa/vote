@@ -1,0 +1,17 @@
+## Visual Studio / .NET
+bin/
+obj/
+
+# User-specific files
+.vs/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Node / frontend
+node_modules/
+
+# Log / db files
+*.log
+*.db
