@@ -66,6 +66,16 @@ app.MapPost("/messages/{id:int}/upvote", async (int id, AppDbContext db) =>
     return Results.Ok(m);
 });
 
+// ADMIN: delete all messages - use with caution. You can call this locally or via ngrok.
+app.MapDelete("/messages", async (AppDbContext db) =>
+{
+    var all = await db.Messages.ToListAsync();
+    if (all.Count == 0) return Results.Ok(new { deleted = 0 });
+    db.Messages.RemoveRange(all);
+    var deleted = await db.SaveChangesAsync();
+    return Results.Ok(new { deleted = deleted });
+});
+
 app.Run();
 
 // DTO and small record types inside the same file for simplicity

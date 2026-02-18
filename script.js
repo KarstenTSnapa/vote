@@ -4,6 +4,32 @@ const API_BASE = 'https://notifiable-phylar-elvera.ngrok-free.dev';
 let messages = [];
 let votedMessageId = null; // track by id now
 
+// Cookie helpers (simple, client-side persistence)
+function setCookie(name, value, days) {
+    let expires = '';
+    if (days) {
+        const d = new Date();
+        d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+        expires = '; expires=' + d.toUTCString();
+    }
+    document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/';
+}
+
+function getCookie(name) {
+    const nameEQ = name + '=';
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+    }
+    return null;
+}
+
+function deleteCookie(name) {
+    document.cookie = name + '=; Max-Age=0; path=/';
+}
+
 const messageInput = document.getElementById('messageInput');
 const sendBtn = document.getElementById('sendBtn');
 const messagesContainer = document.getElementById('messagesContainer');
@@ -18,6 +44,13 @@ messageInput.addEventListener('keypress', (e) => {
         sendMessage();
     }
 });
+
+// Restore voted state from cookie (persist one vote per browser)
+const savedVote = getCookie('votedMessageId');
+if (savedVote) {
+    const parsed = parseInt(savedVote, 10);
+    if (!Number.isNaN(parsed)) votedMessageId = parsed;
+}
 
 // Fetch existing messages on load
 fetchMessages();
@@ -129,6 +162,11 @@ function displayMessages() {
         upvoteBtn.className = 'upvote-btn';
         upvoteBtn.textContent = '👍 ' + msgObj.votes;
         upvoteBtn.addEventListener('click', () => upvoteMessage(msgObj.id));
+        // If user already voted for a different message, disable other upvote buttons
+        if (votedMessageId !== null && votedMessageId !== msgObj.id) {
+            upvoteBtn.disabled = true;
+            upvoteBtn.title = 'Du har allerede stemt på en annen idé';
+        }
 
         msgBox.appendChild(textSpan);
         msgBox.appendChild(upvoteBtn);
@@ -155,6 +193,8 @@ async function upvoteMessage(id) {
             const idx = messages.findIndex(m => m.id === updated.id);
             if (idx >= 0) messages[idx].votes = updated.votes;
             votedMessageId = id;
+            // Persist vote in cookie for 1 year
+            setCookie('votedMessageId', String(id), 365);
             displayMessages();
             showStatus('Stemmen din ble registrert!', 'success');
             setTimeout(() => hideStatus(), 2000);
