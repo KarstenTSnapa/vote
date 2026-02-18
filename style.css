@@ -81,6 +81,32 @@ button:active {
     border-left: 4px solid #667eea;
     word-wrap: break-word;
     animation: slideIn 0.3s ease-out;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.message-box:hover {
+    background: #efefef;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.message-box.voted {
+    border-left-color: #ffd700;
+    background: #fffbf0;
+}
+
+.message-text {
+    flex: 1;
+}
+
+.vote-count {
+    font-size: 18px;
+    font-weight: bold;
+    color: #667eea;
+    margin-left: 10px;
+    white-space: nowrap;
 }
 
 @keyframes slideIn {
